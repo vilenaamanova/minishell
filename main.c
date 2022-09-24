@@ -49,10 +49,13 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	shell = init_shell(envp);
+	set_param_tty(shell);
+	sighandler_prepare(shell);
 	while (1)
 	{
 		str = rl_gets();
 		lexer(str, shell);
 		parser(shell);
 	}
+	unset_param_tty(shell);
 }

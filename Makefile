@@ -23,7 +23,8 @@ SRCS	=	./lexer/lexer.c \
 			create_envp_utils.c \
 			minishell_utils.c \
 			main.c \
-			# signals.c \
+			signals.c \
+			./executor/executor_cmd.c
 
 LIBFT	=	./libft/libft.a
 
@@ -35,7 +36,7 @@ CC		=	cc
 
 CFLAGS	=	-Wall -Wextra -Werror -g
 
-RFLAGS	=	-lreadline
+RFLAGS	=	-lreadline 
 
 .PHONY	:	all clean fclean re
 
@@ -43,10 +44,9 @@ all 	:	$(NAME)
 
 $(NAME)	: 	$(OBJ) $(HEADER)
 		@$(MAKE) -C libft/
-		$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME) $(RFLAGS)
-
+		$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(RFLAGS) -o $(NAME)
 %.o	: %.c	$(HEADER)
-	$(CC)	$(CFLAGS) -c $< -o $@ $(RFLAGS)
+	$(CC)	$(CFLAGS) -I$(HEADER) -c $< -o $@
 
 clean	:
 	@rm -f $(OBJ)

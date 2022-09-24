@@ -26,6 +26,9 @@
 # include <sys/wait.h>
 # include <unistd.h>
 # include <dirent.h>
+# include <termios.h>
+
+typedef struct termios	t_termios;
 
 typedef struct s_envpmod {
 	char				*variable;
@@ -69,6 +72,11 @@ typedef struct s_shell {
 	t_parser			*parser;
 	t_envpmod			*envp;
 	t_redirects			*redirects;
+	sigset_t			newset;
+	t_termios			setting_tty;
+	t_termios			setting_out_tty;
+	struct sigaction	s_int;
+	struct sigaction	s_quit;
 }	t_shell;
 
 /* lexer */
@@ -139,6 +147,8 @@ int						ft_len_str(char **str);
 /* signals */
 void					sigint_handler(int num);
 void					sighandler_prepare(t_shell *shell);
+void					set_param_tty(t_shell *shell);
+void					unset_param_tty(t_shell *shell);
 
 /* utils */
 t_shell					*init_shell(char **envp);
@@ -147,5 +157,8 @@ t_shell					*init_shell(char **envp);
 char					*rl_gets(void);
 
 int						main(int argc, char **argv, char **envp);
+
+/*executor*/
+int	executor(t_shell *shell);
 
 #endif
