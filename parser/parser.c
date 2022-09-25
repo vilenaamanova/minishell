@@ -12,8 +12,10 @@
 
 #include "../minishell.h"
 
-t_parser	*init_parser(t_parser *parser)
+t_parser	*init_parser(void)
 {
+	t_parser	*parser;
+
 	parser = (t_parser *)malloc(sizeof(t_parser));
 	if (!parser)
 		return (NULL);
@@ -34,21 +36,22 @@ void	get_cmd_struct(t_parser *parser, char *token)
 {
 	t_list	*new_cmd;
 
-	if (parser->cmd_name == NULL)
+	if (!parser->cmd_name)
 		parser->cmd_name = ft_strdup(token);
 	new_cmd = ft_lstnew(parser->cmd_name);
 	ft_lstadd_back(&parser->cmd_list, new_cmd);
 	parser->count++;
 }
 
-void	get_cmd(t_shell *shell, t_list *tokens)
+void	get_cmd(t_shell *shell, t_list **tokens_list)
 {
+	t_list		*tokens;
 	t_parser	*parser;
 	char		*token;
 	char		*next_to_redir;
 
-	init_parser(shell->parser);
-	parser = shell->parser;
+	tokens = *tokens_list;
+	parser = init_parser();
 	while (tokens && is_pipe_token(tokens->content) != 1)
 	{
 		token = tokens->content;
@@ -60,6 +63,17 @@ void	get_cmd(t_shell *shell, t_list *tokens)
 		else
 			get_cmd_struct(parser, token);
 		tokens = tokens->next;
+	}
+	ft_lstadd_back(&shell->commands, ft_lstnew(parser));
+	*tokens_list = tokens;
+
+	t_list	*tmp;
+	tmp = parser->cmd_list;
+	printf("CMD LIST:\n");
+	while (tmp)
+	{
+		printf("%s\n", (char *)tmp->content);
+		tmp = tmp->next;
 	}
 }
 
@@ -75,10 +89,12 @@ void	parser(t_shell *shell)
 			while (tokens)
 			{
 				if (is_pipe_token(tokens->content) == 0)
-					get_cmd(shell, tokens);
-				tokens = tokens->next;
+					get_cmd(shell, &tokens);
+				if (tokens)
+					tokens = tokens->next;
 			}
 		}
 	}
-	// очищаем список токенов в самом главном списке
+	ft_lstclear(&shell->tokens, free);
+	shell->tokens = NULL;
 }
