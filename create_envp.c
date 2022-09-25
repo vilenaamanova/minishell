@@ -35,7 +35,7 @@ void	create_envp_struct(t_shell *shell)
 		index_of_eq_sign = find_eq_sign(shell->envp_org[i]);
 		variable = ft_substr(shell->envp_org[i], 0, index_of_eq_sign);
 		value = ft_substr(shell->envp_org[i], index_of_eq_sign + 1,
-				ft_strlen(shell->envp_org[i]));
+				ft_strlen(shell->envp_org[i]) - ft_strlen(variable) + 1);
 		ft_lstadd_back_envpnode(shell, ft_lstnew_envpnode(variable, value));
 		i++;
 	}

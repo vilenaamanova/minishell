@@ -19,12 +19,13 @@ SRCS	=	./lexer/lexer.c \
 			./src/unset.c \
 			./src/utils_export.c \
 			./src/utils.c \
+			./executor/executor_cmd.c \
 			create_envp.c \
 			create_envp_utils.c \
 			minishell_utils.c \
 			main.c \
 			signals.c \
-			./executor/executor_cmd.c
+			prov.c
 
 LIBFT	=	./libft/libft.a
 
@@ -34,7 +35,7 @@ OBJ		=	$(patsubst %.c, %.o, $(SRCS))
 
 CC		=	cc
 
-CFLAGS	=	-Wall -Wextra -Werror -g
+CFLAGS	=	-g -Wall -Wextra -Werror 
 
 RFLAGS	=	-lreadline 
 
@@ -43,10 +44,11 @@ RFLAGS	=	-lreadline
 all 	:	$(NAME)
 
 $(NAME)	: 	$(OBJ) $(HEADER)
-		@$(MAKE) -C libft/
+		@$(MAKE) -C libft/ --silent
 		$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(RFLAGS) -o $(NAME)
+		
 %.o	: %.c	$(HEADER)
-	$(CC)	$(CFLAGS) -I$(HEADER) -c $< -o $@
+	$(CC)	$(CFLAGS) -c $< -o $@
 
 clean	:
 	@rm -f $(OBJ)

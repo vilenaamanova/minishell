@@ -69,6 +69,7 @@ typedef struct s_shell {
 	char				**envp_mod;
 	char				**envp_exp;
 	t_list				*tokens;
+	t_list				*commands;
 	t_parser			*parser;
 	t_envpmod			*envp;
 	t_redirects			*redirects;
@@ -106,14 +107,13 @@ t_redirwrite			*ft_lstlast_rw(t_shell *shell);
 void					ft_lstadd_back_rw(t_shell *shell, t_redirwrite *new);
 t_redirread				*ft_lstlast_rr(t_shell *shell);
 void					ft_lstadd_back_rr(t_shell *shell, t_redirread *new);
-t_parser				*init_parser(t_parser *parser);
+t_parser				*init_parser(void);
 void					get_cmd_struct(t_parser *parser, char *token);
-void					get_cmd(t_shell *shell, t_list *tokens);
+void					get_cmd(t_shell *shell, t_list **tokens_list);
 
 /* envp */
 int						find_eq_sign(char *str);
 void					create_envp_struct(t_shell *shell);
-
 t_envpmod				*ft_lstnew_envpnode(char *variable, char *value);
 t_envpmod				*ft_lstlast_envpnode(t_shell *shell);
 void					ft_lstadd_back_envpnode(t_shell *shell, t_envpmod *new);
@@ -134,7 +134,7 @@ void					expenv_sort(t_shell *shell);
 void					ft_export(t_shell *shell);
 void					ft_pwd(void);
 int						check_name_unset(void *token);
-void					delete_env(t_shell *shell, t_list *token);
+void					delete_env(t_shell *shell, t_parser *parser);
 int						ft_strcmp(const char *s1, const char *s2);
 int						arg_exist(char **envp, char *str, int num, int i);
 int						ft_export_check(char *envp);
@@ -158,7 +158,9 @@ char					*rl_gets(void);
 
 int						main(int argc, char **argv, char **envp);
 
-/*executor*/
-int	executor(t_shell *shell);
+/* executor */
+int						executor(t_shell *shell);
+
+void	find_builtin(t_shell *shell);
 
 #endif
