@@ -56,7 +56,7 @@ int	main(int argc, char **argv, char **envp)
 		str = rl_gets();
 		lexer(str, shell);
 		parser(shell);
-		// find_builtin(shell);
+		find_builtin(shell);
 	}
 	// unset_param_tty(shell);
 }

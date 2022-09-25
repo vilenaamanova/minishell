@@ -96,6 +96,7 @@ int						ft_isquote(char c);
 int						quote_type(char c);
 void					get_rid_quotes(t_list *tokens);
 int						get_token_in_q_len(char *token);
+char					*get_token(char *token, int token_length);
 int						ft_isoperator(char c);
 int						ft_isvalidstr(char c);
 int						check_quotes(char c, int is_in_quote);

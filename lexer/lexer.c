@@ -80,12 +80,12 @@ void	lexer(char *str, t_shell *shell)
 	create_envp_struct(shell);
 	shell->tokens = get_tokens(str);
 
-	t_list *prov;
-	prov = shell->tokens;
-	printf("TOKENS:\n");
-	while (prov)
-	{
-		printf("%s\n", (char *)prov->content);
-		prov = prov->next;
-	}
+	// t_list *prov;
+	// prov = shell->tokens;
+	// printf("TOKENS:\n");
+	// while (prov)
+	// {
+	// 	printf("%s\n", (char *)prov->content);
+	// 	prov = prov->next;
+	// }
 }

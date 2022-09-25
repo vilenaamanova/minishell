@@ -67,14 +67,14 @@ void	get_cmd(t_shell *shell, t_list **tokens_list)
 	ft_lstadd_back(&shell->commands, ft_lstnew(parser));
 	*tokens_list = tokens;
 
-	t_list	*tmp;
-	tmp = parser->cmd_list;
-	printf("CMD LIST:\n");
-	while (tmp)
-	{
-		printf("%s\n", (char *)tmp->content);
-		tmp = tmp->next;
-	}
+	// t_list	*tmp;
+	// tmp = parser->cmd_list;
+	// printf("CMD LIST:\n");
+	// while (tmp)
+	// {
+	// 	printf("%s\n", (char *)tmp->content);
+	// 	tmp = tmp->next;
+	// }
 }
 
 void	parser(t_shell *shell)
