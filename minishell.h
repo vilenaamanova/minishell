@@ -58,15 +58,16 @@ typedef struct s_parser {
 	int					count;
 	char				*cmd_name;
 	t_list				*cmd_list;
+	t_parser			*next;//возможно убрать
 }	t_parser;
 
 typedef struct s_shell {
 	int					status;
 	int					fd_read;
 	int					fd_write;
-	char				**envp_arr;
-	char				**envp_org;
-	char				**envp_mod;
+	char				**envp_arr;//
+	char				**envp_org;//копия
+	char				**envp_mod;//проверить где сидит
 	char				**envp_exp;
 	t_list				*tokens;
 	t_parser			*parser;
@@ -77,7 +78,14 @@ typedef struct s_shell {
 	t_termios			setting_out_tty;
 	struct sigaction	s_int;
 	struct sigaction	s_quit;
+	t_pipes				*pipes;
 }	t_shell;
+
+typedef struct s_pipes {
+	int		num_pipe;
+	int		*pids;
+	int		**pipes;
+} t_pipes
 
 /* lexer */
 void					lexer(char *str, t_shell *shell);
@@ -160,5 +168,6 @@ int						main(int argc, char **argv, char **envp);
 
 /*executor*/
 int	executor(t_shell *shell);
+int	handle_error_code(t_shell *shell);
 
 #endif

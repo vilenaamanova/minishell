@@ -41,7 +41,7 @@ void	get_cmd_struct(t_parser *parser, char *token)
 	parser->count++;
 }
 
-void	get_cmd(t_shell *shell, t_list *tokens)
+void	*get_cmd(t_shell *shell, t_list *tokens)
 {
 	t_parser	*parser;
 	char		*token;
