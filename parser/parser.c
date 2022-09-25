@@ -38,21 +38,21 @@ void	get_cmd_struct(t_parser *parser, char *token)
 
 	if (!parser->cmd_name)
 		parser->cmd_name = ft_strdup(token);
-	new_cmd = ft_lstnew(parser->cmd_name);
+	new_cmd = ft_lstnew(ft_strdup(token));
 	ft_lstadd_back(&parser->cmd_list, new_cmd);
 	parser->count++;
 }
 
 void	get_cmd(t_shell *shell, t_list **tokens_list)
 {
-	t_list		*tokens;
-	t_parser	*parser;
 	char		*token;
 	char		*next_to_redir;
+	t_list		*tokens;
+	t_parser	*parser;
 
 	tokens = *tokens_list;
 	parser = init_parser();
-	while (tokens && is_pipe_token(tokens->content) != 1)
+	while (tokens && is_pipe_token(tokens->content) == 0)
 	{
 		token = tokens->content;
 		if (is_redirects_token(token))
@@ -81,18 +81,15 @@ void	parser(t_shell *shell)
 {
 	t_list	*tokens;
 
-	if (check_all_tokens(shell->tokens) == 0)
+	if (shell->tokens && check_all_tokens(shell->tokens) == 0)
 	{
 		tokens = shell->tokens;
-		if (tokens) // проверяем сущ-ет ли список и пайпы
+		while (tokens)
 		{
-			while (tokens)
-			{
-				if (is_pipe_token(tokens->content) == 0)
-					get_cmd(shell, &tokens);
-				if (tokens)
-					tokens = tokens->next;
-			}
+			if (is_pipe_token(tokens->content) == 0)
+				get_cmd(shell, &tokens);
+			if (tokens)
+				tokens = tokens->next;
 		}
 	}
 	ft_lstclear(&shell->tokens, free);

@@ -3,6 +3,7 @@ NAME	=	minishell
 SRCS	=	./lexer/lexer.c \
 			./lexer/lexer_utils.c \
 			./lexer/check_quotes.c \
+			./lexer/get_rid_quotes.c \
 			./parser/get_char.c \
 			./parser/parse_pipes.c \
 			./parser/parse_redirects_utils.c \
@@ -14,18 +15,18 @@ SRCS	=	./lexer/lexer.c \
 			./src/echo.c \
 			./src/env.c \
 			./src/exit.c \
-			./src/export.c \
 			./src/pwd.c \
-			./src/unset.c \
 			./src/utils_export.c \
 			./src/utils.c \
-			./executor/executor_cmd.c \
 			create_envp.c \
 			create_envp_utils.c \
 			minishell_utils.c \
 			main.c \
 			signals.c \
 			prov.c
+			# ./src/export.c
+			# ./src/unset.c
+			# ./executor/executor_cmd.c
 
 LIBFT	=	./libft/libft.a
 

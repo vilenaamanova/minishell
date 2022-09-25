@@ -37,7 +37,7 @@ int	ft_isoperator(char c)
 
 int	ft_isvalidstr(char c)
 {
-	if (ft_isspace(c) == 1 || ft_isoperator(c) == 1)
+	if (ft_isspace(c) == 1) //  || ft_isoperator(c) == 1
 		return (1);
 	else
 		return (0);

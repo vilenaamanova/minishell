@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncathy <ncathy@student.21-school.ru>       +#+  +:+       +#+        */
+/*   By: ncathy <ncathy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/18 22:11:56 by alihandra         #+#    #+#             */
-/*   Updated: 2022/09/24 01:03:28 by ncathy           ###   ########.fr       */
+/*   Updated: 2022/09/25 15:45:03 by ncathy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,21 +85,29 @@ void	add_envpxpenv(t_shell *shell, char *str)
 
 void	expenv_sort(t_shell *shell)
 {
-	int		i;
-	int		j;
-	char	*env;
+	int			i;
+	int			j;
+	// int			size_env;
+	char		**arr;
+	t_envpmod	*tmp;
 
 	i = 0;
+	j = 0;
+	tmp = shell->envp;
+	while (tmp)
+		i++;	
+	arr = (char **)malloc((i + 1) * sizeof(char *));
+	i = 0;
 	while (i < ft_len_str(shell->envp_exp) - 1)
-	{
+	{ 
 		j = i + 1;
 		while (j < ft_len_str(shell->envp_exp))
 		{
 			if (ft_strcmp(shell->envp_exp[i], shell->envp_exp[j]))
 			{
-				env = shell->envp_exp[i];
+				envp = shell->envp_exp[i];
 				shell->envp_exp[i] = shell->envp_exp[j];
-				shell->envp_exp[j] = env;
+				shell->envp_exp[j] = envp;
 			}
 			j++;
 		}
@@ -108,18 +116,18 @@ void	expenv_sort(t_shell *shell)
 	ft_print_env(shell->envp_exp);
 }
 
-void	ft_export(t_shell *shell)
+void	ft_export(t_shell *shell, t_parser *cmd_pars)
 {
 	int			i;
 	t_list		*tmp;
 
-	i = 0;
-	tmp = shell->parser->cmd_list;
-	if (shell->parser->count == 0)
+	i = 1;
+	tmp = cmd_pars->cmd_list;
+	if (cmd_pars->count == 1)
 		expenv_sort(shell);
-	else if ((shell->parser->count > 0) && (tmp != NULL))
+	else if ((cmd_pars->count > 1) && (tmp != NULL))
 	{
-		while (i < shell->parser->count)
+		while (i < cmd_pars->count)
 		{
 			if (ft_strncmp((char *)tmp->content, "_=", 2)
 				&& ft_strcmp((char *)tmp->content, "_"))

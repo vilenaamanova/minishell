@@ -16,7 +16,7 @@ int	check_first_token(char *first_token)
 {
 	if (is_pipe_token(first_token) == 1)
 	{
-		perror("minishell: syntax error near unexpected token '|'\n");
+		ft_putstr_fd("lalala1 minishell: syntax error near unexpected token '|'\n", 2);
 		return (1);
 	}
 	return (0);
@@ -26,23 +26,26 @@ int	check_last_token(char *last_token)
 {
 	if (is_redirects_token(last_token) == 1)
 	{
-		perror("minishell: syntax error near unexpected token 'newline'\n");
+		ft_putstr_fd("minishell: syntax error near unexpected token 'newline'\n", 2);
 		return (1);
 	}
 	return (0);
 }
 
-int	check_redirects(char *next_to_redir)
+int	check_redirects(char *token, char *next_to_redir)
 {
-	if (is_pipe_token(next_to_redir) == 1)
+	if (is_redirects_token(token))
 	{
-		perror("minishell: syntax error near unexpected token '|'\n");
-		return (1);
-	}
-	else if (is_redirects_token(next_to_redir) == 1)
-	{
-		perror("minishell: syntax error near unexpected token ''"); // исправить
-		return (1);
+		if (is_pipe_token(next_to_redir) == 1)
+		{
+			ft_putstr_fd("lalala2 minishell: syntax error near unexpected token '|'\n", 2);
+			return (1);
+		}
+		else if (is_redirects_token(next_to_redir) == 1)
+		{
+			perror("minishell: syntax error near unexpected token ''"); // исправить
+			return (1);
+		}
 	}
 	return (0);
 }
@@ -75,7 +78,7 @@ int	syntax_error(t_list *tokens)
 		if (tokens->next != NULL)
 		{
 			next_token = tokens->next->content;
-			if (check_redirects(next_token) == 1
+			if (check_redirects(token, next_token) == 1
 				|| check_two_char_in_a_row(token, next_token) == 1)
 				return (1);
 		}

@@ -58,15 +58,16 @@ typedef struct s_parser {
 	int					count;
 	char				*cmd_name;
 	t_list				*cmd_list;
+	struct s_parser		*next;//возможно убрать
 }	t_parser;
 
 typedef struct s_shell {
 	int					status;
 	int					fd_read;
 	int					fd_write;
-	char				**envp_arr;
-	char				**envp_org;
-	char				**envp_mod;
+	char				**envp_arr;//
+	char				**envp_org;//копия
+	char				**envp_mod;//проверить где сидит
 	char				**envp_exp;
 	t_list				*tokens;
 	t_list				*commands;
@@ -78,13 +79,23 @@ typedef struct s_shell {
 	t_termios			setting_out_tty;
 	struct sigaction	s_int;
 	struct sigaction	s_quit;
+	struct s_pipes		*pipes;
 }	t_shell;
+
+typedef struct s_pipes {
+	int		num_pipe;
+	int		*pids;
+	int		**pipes;
+} t_pipes;
 
 /* lexer */
 void					lexer(char *str, t_shell *shell);
 t_list					*get_tokens(char *str);
 void					split_the_string(char *str, t_list **tokens);
 int						ft_isquote(char c);
+int						quote_type(char c);
+void					get_rid_quotes(t_list *tokens);
+int						get_token_in_q_len(char *token);
 int						ft_isoperator(char c);
 int						ft_isvalidstr(char c);
 int						check_quotes(char c, int is_in_quote);
@@ -98,7 +109,7 @@ int						is_redirects_token(char *token);
 int						check_all_tokens(t_list *tokens);
 int						check_first_token(char *first_token);
 int						check_last_token(char *last_token);
-int						check_redirects(char *next_to_redir);
+int						check_redirects(char *token, char *next_to_redir);
 int						check_two_char_in_a_row(char *token, char *next_token);
 int						syntax_error(t_list *tokens);
 void					*get_redir_struct(t_shell *shell,
@@ -122,16 +133,16 @@ void					ft_lstadd_back_envpnode(t_shell *shell, t_envpmod *new);
 void					change_env(t_shell *shell, char *str, char *new_value);
 void					minicd(t_shell *shell, char *vars, char *str);
 void					open_dir(t_shell *shell, char *str);
-void					ft_cd(t_shell *shell);
+void					ft_cd(t_parser *parser, t_shell *shell);
 void					ft_print_echo(t_shell *shell, t_list *tmp);
 void					ft_echo(t_shell *shell);
-void					env_pr(t_shell *shell, t_envpmod *envp);
+void					env_pr(t_envpmod *envp);
 int						ft_exit(t_shell *shell);
 void					add_toenv(t_shell *val, char *str, int num);
 void					add_toexpenv(t_shell *val, char *str, int num);
 void					add_envpxpenv(t_shell *shell, char *str);
 void					expenv_sort(t_shell *shell);
-void					ft_export(t_shell *shell);
+void					ft_export(t_shell *shell, t_parser *cmd_pars);
 void					ft_pwd(void);
 int						check_name_unset(void *token);
 void					delete_env(t_shell *shell, t_parser *parser);
@@ -160,7 +171,8 @@ int						main(int argc, char **argv, char **envp);
 
 /* executor */
 int						executor(t_shell *shell);
+int						handle_error_code(t_shell *shell);
 
-void	find_builtin(t_shell *shell);
+void					find_builtin(t_shell *shell);
 
 #endif

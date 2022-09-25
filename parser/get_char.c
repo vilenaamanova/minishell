@@ -14,24 +14,24 @@
 
 int	is_operator_token(char *token)
 {
-	if (is_pipe_token(token) == 1 || is_redirects_token(token) == 1)
-		return (1);
-	return (0);
+	if (is_pipe_token(token) == 0 || is_redirects_token(token) == 0)
+		return (0);
+	return (1);
 }
 
 int	is_pipe_token(char *token)
 {
-	if (ft_strncmp("|", token, ft_strlen(token)) == 1)
-		return (1);
-	return (0);
+	if (ft_strncmp("|", token, ft_strlen(token)))
+		return (0);
+	return (1);
 }
 
 int	is_redirects_token(char *token)
 {
-	if (ft_strncmp(">", token, ft_strlen(token)) == 1
-		|| ft_strncmp("<", token, ft_strlen(token)) == 1
-		|| ft_strncmp(">>", token, ft_strlen(token)) == 1
-		|| ft_strncmp("<<", token, ft_strlen(token)) == 1)
-		return (1);
-	return (0);
+	if (ft_strncmp(">", token, ft_strlen(token))
+		|| ft_strncmp("<", token, ft_strlen(token))
+		|| ft_strncmp(">>", token, ft_strlen(token))
+		|| ft_strncmp("<<", token, ft_strlen(token)))
+		return (0);
+	return (1);
 }

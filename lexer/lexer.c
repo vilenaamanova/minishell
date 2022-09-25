@@ -27,8 +27,11 @@ int	get_token_length(char *str, int i)
 	if (ft_isvalidstr(str[i]) == 0 && check_qerror(str) == 0)
 	{
 		is_in_quote = check_quotes(str[i], is_in_quote);
-		// if (is_in_quote == 1)
-		// 	i++;
+		if (is_in_quote == 1)
+		{
+			token_length++;
+			i++;
+		}
 		while (str[i] != '\0'
 			&& (ft_isvalidstr(str[i]) == 0 || (is_in_quote != 0)))
 		{
@@ -68,6 +71,7 @@ t_list	*get_tokens(char *str)
 
 	tokens = NULL;
 	split_the_string(str, &tokens);
+	get_rid_quotes(tokens);
 	return (tokens);
 }
 
@@ -75,4 +79,13 @@ void	lexer(char *str, t_shell *shell)
 {
 	create_envp_struct(shell);
 	shell->tokens = get_tokens(str);
+
+	t_list *prov;
+	prov = shell->tokens;
+	printf("TOKENS:\n");
+	while (prov)
+	{
+		printf("%s\n", (char *)prov->content);
+		prov = prov->next;
+	}
 }

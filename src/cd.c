@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncathy <ncathy@student.21-school.ru>       +#+  +:+       +#+        */
+/*   By: ncathy <ncathy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 17:53:42 by alihandra         #+#    #+#             */
-/*   Updated: 2022/09/23 21:46:57 by ncathy           ###   ########.fr       */
+/*   Updated: 2022/09/25 18:39:07 by ncathy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,19 +75,19 @@ void	open_dir(t_shell *shell, char *str)
 	}
 }
 
-void	ft_cd(t_shell *shell)
+void	ft_cd(t_parser *parser, t_shell *shell)
 {
 	char	*vars;
 
 	vars = NULL;
 	vars = getcwd(vars, 1000);
-	if (shell->parser->count > 1)
+	if (parser->count > 1)
 		printf("minishell: cd: too many arguments\n");
-	else if (shell->parser->count == 0 || \
-		ft_strncmp(shell->parser->cmd_list->content, "~", 2) == 0)
+	else if (parser->count == 0 || \
+		ft_strncmp(parser->cmd_list->content, "~", 2) == 0)
 		minicd(shell, vars, "HOME");
-	else if (shell->parser->count > 0 && \
-		ft_strncmp(shell->parser->cmd_list->content, "-", 2) == 0)
+	else if (parser->count > 0 && \
+		ft_strncmp(parser->cmd_list->content, "-", 2) == 0)
 		minicd(shell, vars, "OLDPWD");
 	else
 		open_dir(shell, vars);
