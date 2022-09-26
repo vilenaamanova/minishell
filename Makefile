@@ -4,6 +4,8 @@ SRCS	=	./lexer/lexer.c \
 			./lexer/lexer_utils.c \
 			./lexer/check_quotes.c \
 			./lexer/get_rid_quotes.c \
+			./lexer/run_envp.c \
+			./lexer/run_envp_utils.c \
 			./parser/get_char.c \
 			./parser/parse_pipes.c \
 			./parser/parse_redirects_utils.c \
@@ -11,22 +13,24 @@ SRCS	=	./lexer/lexer.c \
 			./parser/parser_utils.c \
 			./parser/parser.c \
 			./parser/syntax_error.c \
-			./src/cd.c \
-			./src/echo.c \
-			./src/env.c \
-			./src/exit.c \
-			./src/pwd.c \
-			./src/utils_export.c \
-			./src/utils.c \
 			create_envp.c \
 			create_envp_utils.c \
 			minishell_utils.c \
 			main.c \
 			signals.c \
-			prov.c
+			./get_next_line/get_next_line.c \
+			./get_next_line/get_next_line_utils.c \
 			# ./src/export.c
 			# ./src/unset.c
 			# ./executor/executor_cmd.c
+			# ./src/echo.c
+			# ./src/cd.c \
+			# ./src/env.c \
+			# ./src/exit.c \
+			# ./src/pwd.c \
+			# ./src/utils_export.c \
+			# ./src/utils.c \
+			# prov.c \
 
 LIBFT	=	./libft/libft.a
 

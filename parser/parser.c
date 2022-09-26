@@ -75,6 +75,7 @@ void	get_cmd(t_shell *shell, t_list **tokens_list)
 	// 	printf("%s\n", (char *)tmp->content);
 	// 	tmp = tmp->next;
 	// }
+	
 }
 
 void	parser(t_shell *shell)
@@ -92,6 +93,36 @@ void	parser(t_shell *shell)
 				tokens = tokens->next;
 		}
 	}
+
+	// t_parser	*tmp;
+	// int			len_list;
+
+	// len_list = 0;
+	// tmp = (t_parser *)shell->commands->content;
+	// len_list = ft_lstsize(shell->commands);
+	// printf("LEN CMD LIST: %d\n", len_list);
+
+	t_list		*tmp_list;
+	t_parser	*tmp_parser;
+
+	tmp_list = shell->commands;
+	printf("hello\n");
+	while (tmp_list)
+	{
+		tmp_parser = (t_parser *)tmp_list->content;
+		printf("kjajdsf%s\n", (char *)tmp_parser->cmd_list->content);
+		tmp_list = tmp_list->next;
+	}
+
+	// t_parser	*tmp;
+	// tmp = (t_parser *)shell->commands->content;
+	// printf("CMD LIST:\n");
+	// while (tmp->cmd_list)
+	// {
+	// 	printf("%s\n", (char *)tmp->cmd_list->content);
+	// 	tmp->cmd_list = tmp->cmd_list->next;
+	// }
+
 	ft_lstclear(&shell->tokens, free);
 	shell->tokens = NULL;
 }

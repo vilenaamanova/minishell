@@ -28,6 +28,8 @@
 # include <dirent.h>
 # include <termios.h>
 
+# define BUFFER_SIZE 10
+
 typedef struct termios	t_termios;
 
 typedef struct s_envpmod {
@@ -58,20 +60,20 @@ typedef struct s_parser {
 	int					count;
 	char				*cmd_name;
 	t_list				*cmd_list;
-	struct s_parser		*next;//возможно убрать
+	// struct s_parser		*next; //возможно убрать
 }	t_parser;
 
 typedef struct s_shell {
 	int					status;
 	int					fd_read;
 	int					fd_write;
-	char				**envp_arr;//
-	char				**envp_org;//копия
-	char				**envp_mod;//проверить где сидит
+	char				**envp_arr;
+	char				**envp_org; //копия
+	// char				**envp_mod; //проверить где сидит
 	char				**envp_exp;
 	t_list				*tokens;
 	t_list				*commands;
-	t_parser			*parser;
+	// t_parser			*parser;
 	t_envpmod			*envp;
 	t_redirects			*redirects;
 	sigset_t			newset;
@@ -83,17 +85,17 @@ typedef struct s_shell {
 }	t_shell;
 
 typedef struct s_pipes {
-	int		num_pipe;
-	int		*pids;
-	int		**pipes;
-} t_pipes;
+	int					num_pipe;
+	int					*pids;
+	int					**pipes;
+}	t_pipes;
 
 /* lexer */
 void					lexer(char *str, t_shell *shell);
-t_list					*get_tokens(char *str);
+t_list					*get_tokens(char *str, char **envp);
 void					split_the_string(char *str, t_list **tokens);
 int						ft_isquote(char c);
-int						quote_type(char c);
+int						identify_quote_type(char c);
 void					get_rid_quotes(t_list *tokens);
 int						get_token_in_q_len(char *token);
 char					*get_token(char *token, int token_length);
@@ -101,6 +103,12 @@ int						ft_isoperator(char c);
 int						ft_isvalidstr(char c);
 int						check_quotes(char c, int is_in_quote);
 int						check_qerror(char *str);
+void					dollar_sign(t_list *tokens, char **envp);
+void					dollar_sign_implement(char *token, char **envp);
+void					get_envp_arr(t_envpmod *envp, char **envp_arr);
+char					*get_variable(char *token, int *start, int *end);
+char					*get_value(char *variable, char **envp);
+int						part_of_key_envp(char c);
 
 /* parser */
 void					parser(t_shell *shell);
@@ -141,9 +149,9 @@ void					env_pr(t_envpmod *envp);
 int						ft_exit(t_shell *shell);
 void					add_toenv(t_shell *val, char *str, int num);
 void					add_toexpenv(t_shell *val, char *str, int num);
-void					add_envpxpenv(t_shell *shell, char *str);
+void					add_envpxpenv(t_shell *shell, t_list *cmd);
 void					expenv_sort(t_shell *shell);
-void					ft_export(t_shell *shell, t_parser *cmd_pars);
+void					ft_export(t_shell *shell);
 void					ft_pwd(void);
 int						check_name_unset(void *token);
 void					delete_env(t_shell *shell, t_parser *parser);
@@ -164,6 +172,9 @@ void					unset_param_tty(t_shell *shell);
 
 /* utils */
 t_shell					*init_shell(char **envp);
+char					*get_next_line(int fd);
+char					*ft_strchr(const char *s, int c);
+char					*ft_strjoin_mod(char *s1, char *s2);
 
 /* handle prompt */
 char					*rl_gets(void);

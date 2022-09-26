@@ -34,9 +34,17 @@ t_shell	*init_shell(char **envp)
 	shell = (t_shell *)malloc(sizeof(t_shell));
 	if (!shell)
 		return (NULL);
-	shell->tokens = NULL;
-	shell->envp = NULL;
+	shell->status = -1;
+	shell->fd_read = -1;
+	shell->fd_write = -1;
+	shell->envp_arr = NULL;
+	shell->envp_exp = NULL;
 	shell->envp_org = envp;
+	shell->tokens = NULL;
+	shell->commands = NULL;
+	shell->envp = NULL;
+	shell->redirects = NULL;
+	shell->pipes = NULL;
 	create_envp_struct(shell);
 	return (shell);
 }
@@ -56,7 +64,8 @@ int	main(int argc, char **argv, char **envp)
 		str = rl_gets();
 		lexer(str, shell);
 		parser(shell);
-		find_builtin(shell);
+		// find_builtin(shell);
+		// ft_export(shell);
 	}
 	// unset_param_tty(shell);
 }

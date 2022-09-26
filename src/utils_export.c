@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_export.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncathy <ncathy@student.21-school.ru>       +#+  +:+       +#+        */
+/*   By: oshelba <oshelba@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/19 20:42:37 by alihandra         #+#    #+#             */
-/*   Updated: 2022/09/24 00:33:56 by ncathy           ###   ########.fr       */
+/*   Updated: 2022/09/25 16:29:41 by oshelba          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return (0);
 }
 
-int	arg_exist(char **envp, char *str, int num, int i)
+int	arg_exist(char **envp, char *str, int num, int i)//проверка имя переменной
 {
 	char	*tmp;
 

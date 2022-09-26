@@ -16,7 +16,7 @@ int	check_first_token(char *first_token)
 {
 	if (is_pipe_token(first_token) == 1)
 	{
-		ft_putstr_fd("lalala1 minishell: syntax error near unexpected token '|'\n", 2);
+		ft_putstr_fd("minishell: syntax error near unexpected token '|'\n", 2);
 		return (1);
 	}
 	return (0);
@@ -38,7 +38,7 @@ int	check_redirects(char *token, char *next_to_redir)
 	{
 		if (is_pipe_token(next_to_redir) == 1)
 		{
-			ft_putstr_fd("lalala2 minishell: syntax error near unexpected token '|'\n", 2);
+			ft_putstr_fd("minishell: syntax error near unexpected token '|'\n", 2);
 			return (1);
 		}
 		else if (is_redirects_token(next_to_redir) == 1)

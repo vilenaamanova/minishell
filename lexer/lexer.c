@@ -65,20 +65,23 @@ void	split_the_string(char *str, t_list **tokens)
 	}
 }
 
-t_list	*get_tokens(char *str)
+t_list	*get_tokens(char *str, char **envp)
 {
 	t_list	*tokens;
 
+	(void)envp;
+
 	tokens = NULL;
 	split_the_string(str, &tokens);
+	// dollar_sign(tokens, envp);
 	get_rid_quotes(tokens);
 	return (tokens);
 }
 
 void	lexer(char *str, t_shell *shell)
 {
-	create_envp_struct(shell);
-	shell->tokens = get_tokens(str);
+	// create_envp_struct(shell);
+	shell->tokens = get_tokens(str, shell->envp_arr);
 
 	// t_list *prov;
 	// prov = shell->tokens;

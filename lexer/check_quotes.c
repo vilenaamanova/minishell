@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-int	quote_type(char c)
+int	identify_quote_type(char c)
 {
 	if (ft_isquote(c) == 1 && c == '\'')
 		return (1);
