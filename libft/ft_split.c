@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncathy <ncathy@student.21-school.ru>       +#+  +:+       +#+        */
+/*   By: ncathy <ncathy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 11:07:35 by ncathy            #+#    #+#             */
-/*   Updated: 2022/09/24 01:08:16 by ncathy           ###   ########.fr       */
+/*   Updated: 2022/09/28 12:01:08 by ncathy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,13 @@ static int	word_num(const char *str, char c)
 	return (count);
 }
 
-static char	**ft_split_free(char **s)
+char	**ft_split_free(char **s)
 {
 	int	i;
 
 	i = 0;
+	if (!s)
+		return (NULL);
 	while (s[i])
 	{
 		free(s[i]);

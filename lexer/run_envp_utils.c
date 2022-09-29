@@ -20,11 +20,45 @@ int	part_of_key_envp(char c)
 		return (0);
 }
 
+int	get_arr_size(t_envpmod *envp)
+{
+	int			arr_size;
+	t_envpmod	*tmp;
+
+	arr_size = 0;
+	tmp = envp;
+	while (tmp)
+	{
+		if (tmp->variable && tmp->value)
+			arr_size++;
+		tmp = tmp->next;
+	}
+	return (arr_size);
+}
+
+char	**get_envp_arr_pt1(t_shell *shell)
+{
+	int			arr_size;
+	char		**envp_arr;
+	t_envpmod	*envp;
+
+	if (!shell->envp)
+		return (0);
+	envp = shell->envp;
+	arr_size = get_arr_size(shell->envp);
+	if (!arr_size)
+		return (0);
+	envp_arr = (char **)malloc(sizeof(char *) * (arr_size + 1));
+	get_envp_arr_pt2(envp, envp_arr);
+	shell->envp_mod = envp_arr;
+	return (envp_arr);
+}
+
 char	*get_value(char *variable, char **envp)
 {
 	int		i;
 	int		len;
-	// char	*value;
+	char	*value;
 	char	*envp_str;
 
 	i = 0;
@@ -33,11 +67,8 @@ char	*get_value(char *variable, char **envp)
 	while (envp[i] && ft_strncmp(envp[i], variable, len))
 		i++;
 	envp_str = envp[i] + len;
-
-	printf("ENVP STR:\n");
-	printf("%s\n", envp_str);
-
-	return (variable);
+	value = ft_substr(envp_str, 0, ft_strlen(envp_str));
+	return (value);
 }
 
 char	*get_variable(char *token, int *start, int *end)

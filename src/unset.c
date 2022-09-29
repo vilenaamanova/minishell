@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncathy <ncathy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: oshelba <oshelba@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/19 20:35:32 by alihandra         #+#    #+#             */
-/*   Updated: 2022/09/25 15:48:38 by ncathy           ###   ########.fr       */
+/*   Updated: 2022/09/28 10:04:35 by oshelba          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,31 +31,42 @@ int	check_name_unset(void *token)
 	return (0);
 }
 
-void	delete_env(t_shell *shell, t_list *token)
+void	ft_free_envp(t_envpmod *tmp_envp)
 {
-	t_envpmod	*lst;
-	t_envpmod	*tmp;
+	t_envpmod	*tmp_envp_free;
 
-	lst = get_env_key(shell->envp, (char *)token->content);
-	if (!shell->envp || !lst)
-		return ;
-	if (lst == shell->envp)
+	tmp_envp_free = tmp_envp->next;
+	tmp_envp->next = tmp_envp->next->next;
+	if (tmp_envp_free->value)
+		free(tmp_envp_free->value);
+	if (tmp_envp_free->variable)
+		free(tmp_envp_free->variable);
+	free(tmp_envp_free);
+	tmp_envp_free = NULL;
+}
+
+void	delete_env(t_shell *shell)
+{
+	t_list		*tmp_list_com;
+	t_parser	*tmp_parser;
+	t_envpmod	*tmp_envp;
+
+	tmp_parser = (t_parser *)shell->commands->content;
+	tmp_list_com = tmp_parser->cmd_list;
+	if (tmp_list_com->next)
 	{
-		shell->envp = shell->envp->next;
-		if (lst->value)
-			free(lst->value);
-		free(lst->variable);
-		free(lst);
-	}
-	else
-	{
-		tmp = shell->envp;
-		while (tmp->next != lst)
-			tmp = tmp->next;
-		tmp->next = lst->next;
-		if (lst->value)
-			free(lst->value);
-		free(lst->variable);
-		free(lst);
+		tmp_list_com = tmp_list_com->next;
+		while (tmp_list_com)
+		{
+			tmp_envp = shell->envp;
+			while (tmp_envp != NULL && tmp_envp->next != NULL)
+			{
+				if (ft_strcmp((char *)tmp_list_com->content, \
+					tmp_envp->next->variable) == 0)
+					ft_free_envp(tmp_envp);
+				tmp_envp = tmp_envp->next;
+			}
+			tmp_list_com = tmp_list_com->next;
+		}
 	}
 }

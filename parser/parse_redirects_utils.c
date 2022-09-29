@@ -19,7 +19,7 @@ t_redirwrite	*ft_lstlast_rw(t_shell *shell)
 	tmp = shell->redirects->redir_write;
 	if (tmp)
 	{
-		while (tmp->next != NULL)
+		while (tmp)
 			tmp = tmp->next;
 	}
 	return (tmp);
@@ -27,7 +27,7 @@ t_redirwrite	*ft_lstlast_rw(t_shell *shell)
 
 void	ft_lstadd_back_rw(t_shell *shell, t_redirwrite *new)
 {
-	if (shell->redirects->redir_write)
+	if (shell->redirects->redir_write != NULL)
 		ft_lstlast_rw(shell)->next = new;
 	else
 		shell->redirects->redir_write = new;
@@ -40,7 +40,7 @@ t_redirread	*ft_lstlast_rr(t_shell *shell)
 	tmp = shell->redirects->redir_read;
 	if (tmp)
 	{
-		while (tmp->next != NULL)
+		while (tmp)
 			tmp = tmp->next;
 	}
 	return (tmp);
@@ -48,7 +48,7 @@ t_redirread	*ft_lstlast_rr(t_shell *shell)
 
 void	ft_lstadd_back_rr(t_shell *shell, t_redirread *new)
 {
-	if (shell->redirects->redir_read)
+	if (shell->redirects->redir_read != NULL)
 		ft_lstlast_rr(shell)->next = new;
 	else
 		shell->redirects->redir_read = new;

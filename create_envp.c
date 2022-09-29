@@ -39,15 +39,4 @@ void	create_envp_struct(t_shell *shell)
 		ft_lstadd_back_envpnode(shell, ft_lstnew_envpnode(variable, value));
 		i++;
 	}
-	// get_envp_arr(shell->envp, shell->envp_arr);
-
-	// t_envpmod *prov;
-	// prov = shell->envp;
-	// while (prov)
-	// {
-	// 	printf("%s\n", prov->variable);
-	// 	printf("%s\n", prov->value);
-	// 	prov = prov->next;
-	// }
-
 }

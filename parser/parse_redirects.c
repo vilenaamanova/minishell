@@ -12,30 +12,50 @@
 
 #include "../minishell.h"
 
+t_redirwrite	*ft_lstnew_rw(char *operator, char *file_name)
+{
+	t_redirwrite	*tmp;
+
+	tmp = (t_redirwrite *)malloc(sizeof(t_redirwrite));
+	if (!tmp)
+		return (0);
+	tmp->redir_operator = operator;
+	tmp->file_name = file_name;
+	tmp->next = NULL;
+	return (tmp);
+}
+
+t_redirread	*ft_lstnew_rr(char *operator, char *file_name)
+{
+	t_redirread	*tmp;
+
+	tmp = (t_redirread *)malloc(sizeof(t_redirread));
+	if (!tmp)
+		return (0);
+	tmp->redir_operator = operator;
+	tmp->file_name = file_name;
+	tmp->next = NULL;
+	return (tmp);
+}
+
 void	*get_redir_struct(t_shell *shell, char *token, char *next_to_redir)
 {
-	t_redirread		*new_redir_read;
-	t_redirwrite	*new_redir_write;
+	char	*file_name;
+	char	*redir_operator;
 
-	new_redir_read = (t_redirread *)malloc(sizeof(t_redirread));
-	if (!new_redir_read)
-		return (NULL);
-	new_redir_write = (t_redirwrite *)malloc(sizeof(t_redirwrite));
-	if (!new_redir_write)
-		return (NULL);
-	if (ft_strncmp("<", token, ft_strlen(token)) == 0
-		|| ft_strncmp("<<", token, ft_strlen(token)) == 0)
+	if (ft_strncmp(token, ">", ft_strlen(">")) == 0
+		|| ft_strncmp(token, ">>", ft_strlen(">>")) == 0)
 	{
-		new_redir_write->file_name = ft_strdup(next_to_redir);
-		new_redir_write->redir_operator = ft_strdup(token);
-		ft_lstadd_back_rw(shell, new_redir_write);
+		file_name = ft_strdup(next_to_redir);
+		redir_operator = ft_strdup(token);
+		ft_lstadd_back_rw(shell, ft_lstnew_rw(redir_operator, file_name));
 	}
-	if (ft_strncmp(">", token, ft_strlen(token)) == 0
-		|| ft_strncmp(">>", token, ft_strlen(token)) == 0)
+	if (ft_strncmp(token, "<", ft_strlen("<")) == 0
+		|| ft_strncmp(token, "<<", ft_strlen("<<")) == 0)
 	{
-		new_redir_read->file_name = ft_strdup(next_to_redir);
-		new_redir_read->redir_operator = ft_strdup(token);
-		ft_lstadd_back_rr(shell, new_redir_read);
+		file_name = ft_strdup(next_to_redir);
+		redir_operator = ft_strdup(token);
+		ft_lstadd_back_rr(shell, ft_lstnew_rr(redir_operator, file_name));
 	}
 	return (0);
 }

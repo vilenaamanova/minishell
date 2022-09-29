@@ -3,14 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   utils_export.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oshelba <oshelba@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ncathy <ncathy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/19 20:42:37 by alihandra         #+#    #+#             */
-/*   Updated: 2022/09/25 16:29:41 by oshelba          ###   ########.fr       */
+/*   Updated: 2022/09/28 17:44:37 by ncathy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+int	ft_strindex(char *str, char a)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (str[i] && str[i] != a)
+		i++;
+	if (i < ft_strlen(str))
+		return (i);
+	else
+		return (-1);
+}
 
 int	ft_strcmp(const char *s1, const char *s2)
 {
@@ -26,7 +39,7 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return (0);
 }
 
-int	arg_exist(char **envp, char *str, int num, int i)//проверка имя переменной
+int	arg_exist(char **envp, char *str, int num, int i)
 {
 	char	*tmp;
 
@@ -65,12 +78,12 @@ int	ft_export_check(char *envp)
 		if (!ft_isalpha(envp[0]) && envp[0] != '0')
 		{
 			printf("export: `%s': not a valid identifier\n", envp);
-			return (1);
+			return (127);
 		}
 		if (!ft_isprint(envp[i]))
 		{
 			printf("export: `%s': not a valid identifier\n", envp);
-			return (1);
+			return (127);
 		}
 		i++;
 	}

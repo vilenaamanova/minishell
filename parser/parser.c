@@ -19,9 +19,11 @@ t_parser	*init_parser(void)
 	parser = (t_parser *)malloc(sizeof(t_parser));
 	if (!parser)
 		return (NULL);
+	parser->fd_read = -1;
+	parser->fd_write = -1;
+	parser->count = 0;
 	parser->cmd_list = NULL;
 	parser->cmd_name = NULL;
-	parser->count = 0;
 	return (parser);
 }
 
@@ -59,23 +61,15 @@ void	get_cmd(t_shell *shell, t_list **tokens_list)
 		{
 			next_to_redir = tokens->next->content;
 			get_redir_struct(shell, token, next_to_redir);
+			tokens = tokens->next;
 		}
 		else
 			get_cmd_struct(parser, token);
 		tokens = tokens->next;
 	}
+	parser->cmd_args = get_cmd_arr(parser->cmd_list);
 	ft_lstadd_back(&shell->commands, ft_lstnew(parser));
 	*tokens_list = tokens;
-
-	// t_list	*tmp;
-	// tmp = parser->cmd_list;
-	// printf("CMD LIST:\n");
-	// while (tmp)
-	// {
-	// 	printf("%s\n", (char *)tmp->content);
-	// 	tmp = tmp->next;
-	// }
-	
 }
 
 void	parser(t_shell *shell)
@@ -93,36 +87,6 @@ void	parser(t_shell *shell)
 				tokens = tokens->next;
 		}
 	}
-
-	// t_parser	*tmp;
-	// int			len_list;
-
-	// len_list = 0;
-	// tmp = (t_parser *)shell->commands->content;
-	// len_list = ft_lstsize(shell->commands);
-	// printf("LEN CMD LIST: %d\n", len_list);
-
-	t_list		*tmp_list;
-	t_parser	*tmp_parser;
-
-	tmp_list = shell->commands;
-	printf("hello\n");
-	while (tmp_list)
-	{
-		tmp_parser = (t_parser *)tmp_list->content;
-		printf("kjajdsf%s\n", (char *)tmp_parser->cmd_list->content);
-		tmp_list = tmp_list->next;
-	}
-
-	// t_parser	*tmp;
-	// tmp = (t_parser *)shell->commands->content;
-	// printf("CMD LIST:\n");
-	// while (tmp->cmd_list)
-	// {
-	// 	printf("%s\n", (char *)tmp->cmd_list->content);
-	// 	tmp->cmd_list = tmp->cmd_list->next;
-	// }
-
 	ft_lstclear(&shell->tokens, free);
 	shell->tokens = NULL;
 }

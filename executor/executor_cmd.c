@@ -1,119 +1,107 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor_cmd.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ncathy <ncathy@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/28 00:49:23 by oshelba           #+#    #+#             */
+/*   Updated: 2022/09/28 19:58:22 by ncathy           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-int	handle_error_code(t_shell *shell)
+void	fork_execve_cmd(t_shell *shell)
 {
-	if (shell->status < 0)
+	int			pid;
+
+	pid = fork();
+	if (pid == -1)
 	{
-		shell->status *= -1;
-		return (1);
+		perror("minishell's error fork cmd");
+		shell->status = 1;
 	}
-	return (0);
+	else if (pid == 0)
+		fork_execve_cmd_pt2(shell);
+	waitpid(pid, &shell->status, 0);
+	shell->status = shell->status / 256;
 }
 
-int	**init_pipes(int pipes_amount)
+void	execute_cmd(t_parser *cmd, t_shell *shell)
 {
-	int	i;
-	int	**res;
-
-	i = 0;
-	res = (int **)malloc(sizeof(int *) * (pipes_amount + 1));
-	// if (!res)
-	// 	m_error(1, "");
-	while (i < pipes_amount)
+	identify_redir_read(shell);
+	identify_redir_write(shell);
+	if (cmd->cmd_name && is_builtin_cmd(cmd->cmd_name))
+		builtins_cmd(cmd, shell);
+	else if (cmd->cmd_name && cmd->fd_read >= 0 && cmd->fd_write > 0)
 	{
-		res[i] = (int *)malloc(sizeof(int) * 2);
-		if (!res[i])
-			 ;//error 1
-		if (pipe(res[i]) < 0)
-			 ;//error 3
-		i++;
+		fork_execve_cmd(shell);
+		if (!isatty(cmd->fd_read))
+			close(cmd->fd_read);
+		if (!isatty(cmd->fd_write))
+			close(cmd->fd_write);
 	}
-	return (res);
-}
-  
-void	pre_processor(t_shell *shell, t_parser *tmp)
-{
-	int		num_pipe;
-	int		*pids;
-	// t_list	*list_commands;
-	int **pipes;
-	int i;
-
-	i = -1;
-	num_pipe = 1;
-	while (tmp->cmd_list->next)
-	{
-		tmp = tmp->cmd_list->next;
-		num_pipe++;
-	}
-	pids = (int *)malloc(sizeof(int) * num_pipe);
-	if (!pids)
-		 ;//error
-	while (++i < num_pipe)
-	{
-		pids[i] = -1;
-	}
-	pipes = init_pipes(num_pipe);
-	shell->pipes->pids = pids;
-	shell->pipes->num_pipe = num_pipe;
-	shell->pipes->pipes = pipes;
+	if (!cmd->cmd_name && cmd->fd_read > 0)
+		close(cmd->fd_read);
+	if (!cmd->cmd_name && cmd->fd_write > 1)
+		close(cmd->fd_write);
 }
 
-void	builtins_cmd(t_shell *shell, t_parser *parser)
+void	set_fd(t_list *commands, t_shell *shell)
 {
-	int	code;
-	int	save_fd;
-	char *cmd;
+	int			lst_size;
+	int			pipe_fd[2];
+	t_parser	*parser;
 
-	code = -42;
-	save_fd = -1;
-	
-	if (parser->cmd_list)
+	lst_size = ft_lstsize(commands);
+	while (commands)
 	{
-		cmd = (char *)parser->cmd_list->content;
-		shell->status = 0;
-		// if (ft_strncmp("cd", (char *)parser->cmd_list->content, ft_strlen((char *)parser->cmd_list->content)) == 0)
-		// 	ft_cd(parser, shell);
-		if (ft_strncmp("pwd", (char *)parser->cmd_list->content, ft_strlen((char *)parser->cmd_list->content)) == 0)
-			ft_pwd();
-		// if (ft_strncmp("env", (char *)parser->cmd_list->content, ft_strlen((char *)parser->cmd_list->content) + 1) == 0)
-		// 	env_pr(shell->envp);
-		// if (ft_strncmp("export", (char *)parser->cmd_list->content, ft_strlen((char *)parser->cmd_list->content) + 1) == 0)
-		// 	ft_export(shell);
-		// if (ft_strncmp("unset", (char *)parser->cmd_list->content, ft_strlen((char *)parser->cmd_list->content) + 1) == 0)
-		// 	delete_env(shell, parser);
-		// if (ft_strncmp("exit", (char *)parser->cmd_list->content, ft_strlen((char *)parser->cmd_list->content) + 1) == 0)
-		// 	ft_exit(shell);
-		// if (ft_strncmp("echo", (char *)parser->cmd_list->content, ft_strlen((char *)parser->cmd_list->content) + 1) == 0)
-		// 	ft_echo(shell);
+		parser = (t_parser *)commands->content;
+		if (lst_size > 1 && commands->next)
+			pipe(pipe_fd);
+		if (shell->commands == commands)
+			parser->fd_read = 0;
+		if (commands->next)
+			((t_parser *)commands->next->content)->fd_read = pipe_fd[0];
+		if (!commands->next)
+			parser->fd_write = 1;
+		else
+			parser->fd_write = pipe_fd[1];
+		commands = commands->next;
 	}
 }
 
-void	executor(t_shell *shell)
+void	execute_list_cmds(t_shell *shell)
 {
-	int			size_lst;
-	int			code;
 	t_parser	*cmd;
-	int i;
 
+	set_fd(shell->commands, shell);
+	while (shell->commands)
+	{
+		cmd = (t_parser *)shell->commands->content;
+		execute_cmd(cmd, shell);
+		shell->commands = shell->commands->next;
+	}
+}
 
-	i = -1;
-	cmd = (t_parser *)shell->commands->content;
-	if (hangle_error_code() || ft_lstsize(cmd->cmd_list) == 0)
-		return ;
-	// pre_processor(shell, cmd);
-	// if (shell->pipes->num_pipe == 0)
-	// 	builtins_cmd(shell, cmd->cmd_list);
-	// while (cmd && ((shell->pipes->num_pipe) > 0))
-	// {
-	// 	shell->pipes->pids[++i] = fork();
-	// 	if (shell->pipes->pids[i] == 0)
-	// 	{
-	// 		builtins_cmd(shell, cmd->cmd_list); // code =
-	// 		if (code < 0)
-	// 			run_cmd();
-	// 	}
-	// 	cmd->cmd_list->next;
-	// }
-	// post_process(shell);
+int	executor(t_shell *shell)
+{
+	t_parser	*cmd;
+
+	if (ft_lstsize(shell->commands) == 1)
+	{
+		cmd = (t_parser *)shell->commands->content;
+		if (cmd->cmd_name
+			&& !ft_strcmp(cmd->cmd_name, "exit"))
+		{
+			if (!ft_exit(shell))
+				return (1);
+		}
+		else
+			execute_list_cmds(shell);
+	}
+	else
+		execute_list_cmds(shell);
+	return (0);
 }

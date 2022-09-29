@@ -12,6 +12,15 @@
 
 #include "../minishell.h"
 
+void	miss_spaces(char *str, int *i)
+{
+	if (ft_isspace(str[*i]) == 1)
+	{
+		while (ft_isspace(str[*i]) == 1)
+			i++;
+	}
+}
+
 int	get_token_length(char *str, int i)
 {
 	int	is_in_quote;
@@ -19,11 +28,7 @@ int	get_token_length(char *str, int i)
 
 	is_in_quote = 0;
 	token_length = 0;
-	if (ft_isspace(str[i]) == 1)
-	{
-		while (ft_isspace(str[i]) == 1)
-			i++;
-	}
+	miss_spaces(str, &i);
 	if (ft_isvalidstr(str[i]) == 0 && check_qerror(str) == 0)
 	{
 		is_in_quote = check_quotes(str[i], is_in_quote);
@@ -69,26 +74,18 @@ t_list	*get_tokens(char *str, char **envp)
 {
 	t_list	*tokens;
 
-	(void)envp;
-
 	tokens = NULL;
+	str = ft_strtrim(str, " \t\n\v\f\r");
 	split_the_string(str, &tokens);
-	// dollar_sign(tokens, envp);
+	dollar_sign(tokens, envp);
 	get_rid_quotes(tokens);
 	return (tokens);
 }
 
 void	lexer(char *str, t_shell *shell)
 {
-	// create_envp_struct(shell);
-	shell->tokens = get_tokens(str, shell->envp_arr);
+	char	**envp;
 
-	// t_list *prov;
-	// prov = shell->tokens;
-	// printf("TOKENS:\n");
-	// while (prov)
-	// {
-	// 	printf("%s\n", (char *)prov->content);
-	// 	prov = prov->next;
-	// }
+	envp = get_envp_arr_pt1(shell);
+	shell->tokens = get_tokens(str, envp);
 }

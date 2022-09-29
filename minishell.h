@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncathy <ncathy@student.21-school.ru>       +#+  +:+       +#+        */
+/*   By: ncathy <ncathy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/04/22 12:41:23 by ncathy            #+#    #+#             */
-/*   Updated: 2022/04/22 12:41:23 by ncathy           ###   ########.fr       */
+/*   Created: 2022/09/28 11:24:19 by ncathy            #+#    #+#             */
+/*   Updated: 2022/09/28 11:24:19 by ncathy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,41 +56,48 @@ typedef struct s_redirects {
 	struct s_redirwrite	*redir_write;
 }	t_redirects;
 
-typedef struct s_parser {
-	int					count;
-	char				*cmd_name;
-	t_list				*cmd_list;
-	// struct s_parser		*next; //возможно убрать
-}	t_parser;
-
-typedef struct s_shell {
-	int					status;
-	int					fd_read;
-	int					fd_write;
-	char				**envp_arr;
-	char				**envp_org; //копия
-	// char				**envp_mod; //проверить где сидит
-	char				**envp_exp;
-	t_list				*tokens;
-	t_list				*commands;
-	// t_parser			*parser;
-	t_envpmod			*envp;
-	t_redirects			*redirects;
-	sigset_t			newset;
-	t_termios			setting_tty;
-	t_termios			setting_out_tty;
-	struct sigaction	s_int;
-	struct sigaction	s_quit;
-	struct s_pipes		*pipes;
-}	t_shell;
-
 typedef struct s_pipes {
 	int					num_pipe;
 	int					*pids;
 	int					**pipes;
 }	t_pipes;
 
-/* lexer */
+typedef struct s_parser {
+	int					fd_read;
+	int					fd_write;
+	int					count;
+	char				*cmd_name;
+	char				**cmd_args;
+	t_list				*cmd_list;
+}	t_parser;
+
+typedef struct s_shell {
+	int					status;
+	char				**envp_arr;
+	char				**envp_org;
+	char				**envp_mod;
+	char				**envp_exp;
+	t_list				*tokens;
+	t_list				*commands;
+	t_envpmod			*envp;
+	t_pipes				*pipes;
+	t_redirects			*redirects;
+	sigset_t			newset;
+	t_termios			setting_tty;
+	t_termios			setting_out_tty;
+	struct sigaction	s_int;
+	struct sigaction	s_quit;
+}	t_shell;
+
+	/* signals */
+
+void					sigint_handler(int num);
+void					sighandler_prepare(t_shell *shell);
+void					set_param_tty(t_shell *shell);
+void					unset_param_tty(t_shell *shell);
+
+	/* lexer */
+
 void					lexer(char *str, t_shell *shell);
 t_list					*get_tokens(char *str, char **envp);
 void					split_the_string(char *str, t_list **tokens);
@@ -103,14 +110,18 @@ int						ft_isoperator(char c);
 int						ft_isvalidstr(char c);
 int						check_quotes(char c, int is_in_quote);
 int						check_qerror(char *str);
-void					dollar_sign(t_list *tokens, char **envp);
-void					dollar_sign_implement(char *token, char **envp);
-void					get_envp_arr(t_envpmod *envp, char **envp_arr);
+void					dollar_sign(t_list *tokens,
+							char **envp);
+void					dollar_sign_implement(char *token,
+							char **ptoken, char **envp);
+char					**get_envp_arr_pt1(t_shell *shell);
+void					get_envp_arr_pt2(t_envpmod *envp, char **envp_arr);
 char					*get_variable(char *token, int *start, int *end);
 char					*get_value(char *variable, char **envp);
 int						part_of_key_envp(char c);
 
-/* parser */
+	/* parser */
+
 void					parser(t_shell *shell);
 int						is_operator_token(char *token);
 int						is_pipe_token(char *token);
@@ -130,60 +141,84 @@ void					ft_lstadd_back_rr(t_shell *shell, t_redirread *new);
 t_parser				*init_parser(void);
 void					get_cmd_struct(t_parser *parser, char *token);
 void					get_cmd(t_shell *shell, t_list **tokens_list);
+char					**get_cmd_arr(t_list *cmd_list);
+int						ft_strcmp(const char *s1, const char *s2);
+void					free_parser_list(void *commands);
+void					free_redirects(t_shell *shell);
+void					free_shell(t_shell *shell);
 
-/* envp */
+	/* envp */
+
 int						find_eq_sign(char *str);
 void					create_envp_struct(t_shell *shell);
 t_envpmod				*ft_lstnew_envpnode(char *variable, char *value);
 t_envpmod				*ft_lstlast_envpnode(t_shell *shell);
 void					ft_lstadd_back_envpnode(t_shell *shell, t_envpmod *new);
 
-/* commands */
-void					change_env(t_shell *shell, char *str, char *new_value);
-void					minicd(t_shell *shell, char *vars, char *str);
-void					open_dir(t_shell *shell, char *str);
+	/* commands */
+
 void					ft_cd(t_parser *parser, t_shell *shell);
-void					ft_print_echo(t_shell *shell, t_list *tmp);
+void					open_dir(t_shell *shell, char *str);
+void					minicd(t_shell *shell, char *vars, char *str);
+void					change_env(t_shell *shell, char *str, char *new_value);
 void					ft_echo(t_shell *shell);
+void					ft_print_echo(t_list *tmp);
 void					env_pr(t_envpmod *envp);
 int						ft_exit(t_shell *shell);
-void					add_toenv(t_shell *val, char *str, int num);
-void					add_toexpenv(t_shell *val, char *str, int num);
-void					add_envpxpenv(t_shell *shell, t_list *cmd);
-void					expenv_sort(t_shell *shell);
 void					ft_export(t_shell *shell);
-void					ft_pwd(void);
+void					expenv_sort(t_shell *shell);
+void					add_envpxpenv(t_shell *shell, t_list *cmd);
+int						find_ch(char *str, int flag);
+int						ft_pwd(void);
+void					delete_env(t_shell *shell);
+void					ft_free_envp(t_envpmod *tmp_envp);
 int						check_name_unset(void *token);
-void					delete_env(t_shell *shell, t_parser *parser);
-int						ft_strcmp(const char *s1, const char *s2);
-int						arg_exist(char **envp, char *str, int num, int i);
-int						ft_export_check(char *envp);
 void					ft_print_env(char **envp);
-t_envpmod				*get_env_key(t_envpmod *env, char *key);
-t_envpmod				*lst_new_env(char *name, char *content);
-int						lst_add_back_env(t_shell *shell, t_envpmod *new);
+int						ft_export_check(char *envp);
+int						arg_exist(char **envp, char *str, int num, int i);
+int						ft_strcmp(const char *s1, const char *s2);
+int						ft_strindex(char *str, char a);
+char					**ft_sorting(char **arr);
+void					ft_free_arr(char **s);
+t_envpmod				*get_my_env(t_envpmod *env, char *name);
 int						ft_len_str(char **str);
+int						lst_add_back_env(t_shell *shell, t_envpmod *new);
+t_envpmod				*lst_new_env(char *name, char *content);
+t_envpmod				*get_env_key(t_envpmod *env, char *key);
 
-/* signals */
-void					sigint_handler(int num);
-void					sighandler_prepare(t_shell *shell);
-void					set_param_tty(t_shell *shell);
-void					unset_param_tty(t_shell *shell);
+	/* executor */
 
-/* utils */
+int						executor(t_shell *shell);
+void					execute_list_cmds(t_shell *shell);
+void					set_fd(t_list *commands, t_shell *shell);
+void					execute_cmd(t_parser *cmd, t_shell *shell);
+void					fork_execve_cmd(t_shell *shell);
+void					fork_execve_cmd_pt2(t_shell *shell);
+int						**init_pipes(int pipes_amount);
+char					*get_patch_cmd(char *cmd_name, t_shell *shell);
+char					**ft_find_paths(char *envp[]);
+char					*ft_find_cmd(char *cmd, char *paths[]);
+int						is_builtin_cmd(char *cmd_name);
+void					builtins_cmd(t_parser *parser, t_shell *shell);
+char					*ft_strjoin_f(char *s1, char *s2, int need_free);
+void					strjoin_cleaner(char *s1, char *s2, int need_free);
+void					identify_redir_read(t_shell *shell);
+int						determine_fd_read(t_redirread *r_read, int fd_read);
+int						ft_heredoc(int fd_write, char *eof);
+void					identify_redir_write(t_shell *shell);
+int						determine_fd_write(t_redirwrite *r_write, int fd_write);
+
+	/* utils */
+
 t_shell					*init_shell(char **envp);
 char					*get_next_line(int fd);
 char					*ft_strchr(const char *s, int c);
 char					*ft_strjoin_mod(char *s1, char *s2);
 
-/* handle prompt */
+	/* handle prompt */
+
 char					*rl_gets(void);
-
 int						main(int argc, char **argv, char **envp);
-
-/* executor */
-int						executor(t_shell *shell);
-int						handle_error_code(t_shell *shell);
 
 void					find_builtin(t_shell *shell);
 

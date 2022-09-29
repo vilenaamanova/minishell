@@ -6,7 +6,7 @@
 /*   By: ncathy <ncathy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 17:53:42 by alihandra         #+#    #+#             */
-/*   Updated: 2022/09/25 18:39:07 by ncathy           ###   ########.fr       */
+/*   Updated: 2022/09/28 19:25:56 by ncathy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,12 @@ void	change_env(t_shell *shell, char *str, char *new_value)
 	t_envpmod	*tmp;
 
 	tmp = get_env_key(shell->envp, str);
-	if (tmp)
+	if (tmp && tmp->value && new_value != NULL)
 	{
-		if (tmp->value)
-			free(tmp->value);
-		tmp->value = new_value;
+		free(tmp->value);
+		tmp->value = strdup(new_value);
 	}
-	else
+	else if (!tmp)
 		lst_add_back_env(shell, lst_new_env(ft_strdup(str), new_value));
 }
 
@@ -58,7 +57,7 @@ void	open_dir(t_shell *shell, char *str)
 	char	*pwd;
 
 	dir = opendir(str);
-	if (!dir)
+	if (dir == NULL)
 	{
 		printf("minishell: cd: ");
 		printf ("%s: %s\n", str, strerror(errno));
@@ -80,14 +79,15 @@ void	ft_cd(t_parser *parser, t_shell *shell)
 	char	*vars;
 
 	vars = NULL;
-	vars = getcwd(vars, 1000);
-	if (parser->count > 1)
+	if (parser->cmd_list->next)
+		vars = (char *)parser->cmd_list->next->content;
+	if (parser->count > 2)
 		printf("minishell: cd: too many arguments\n");
-	else if (parser->count == 0 || \
-		ft_strncmp(parser->cmd_list->content, "~", 2) == 0)
+	else if (parser->count == 1 || \
+		ft_strncmp(vars, "~", 2) == 0)
 		minicd(shell, vars, "HOME");
-	else if (parser->count > 0 && \
-		ft_strncmp(parser->cmd_list->content, "-", 2) == 0)
+	else if (parser->count > 1 && \
+		ft_strncmp(vars, "-", 2) == 0)
 		minicd(shell, vars, "OLDPWD");
 	else
 		open_dir(shell, vars);

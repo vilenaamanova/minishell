@@ -6,7 +6,7 @@
 /*   By: oshelba <oshelba@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/24 01:20:41 by ncathy            #+#    #+#             */
-/*   Updated: 2022/09/24 15:28:01 by oshelba          ###   ########.fr       */
+/*   Updated: 2022/09/28 10:05:39 by oshelba          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ void	sighandler_prepare(t_shell *shell)
 {
 	sigset_t	newset;
 
-	sigemptyset(&newset); // sigemptyset инициализирует набор сигналов, указанный в set, и "очищает" его от всех сигналов.
-	sigaddset(&newset, SIGINT); // int sigaddset(sigset_t *set, int signum); sigaddset и sigdelset добавляют сигналы signum к set и удаляют эти сигналы из набора соответственно.
+	sigemptyset(&newset);
+	sigaddset(&newset, SIGINT);
 	sigaddset(&newset, SIGQUIT);
 	shell->s_int.sa_handler = sigint_handler;
 	sigaction(SIGINT, &shell->s_int, NULL);
